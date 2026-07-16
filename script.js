@@ -126,15 +126,9 @@ function renderGrid(items) {
   els.grid.appendChild(frag);
 }
 
-// ========== LIGHTBOX FIX ==========
 function openLightbox(item) {
-  if (!item) return;
-  
-  // Set image
   els.lightboxImg.src = item.url;
   els.lightboxImg.alt = `Specimen No. ${item.id}`;
-  
-  // Set metadata
   els.lbId.textContent = `Plate No. ${item.id}`;
   els.lbDl.innerHTML = `
     <dt>Dimensions</dt><dd>${item.width} × ${item.height}px</dd>
@@ -143,59 +137,51 @@ function openLightbox(item) {
     <dt>Favorites</dt><dd>${item.favorites}</dd>
     ${item.artists?.length ? `<dt>Artist</dt><dd>${item.artists.map((a) => a.name).join(", ")}</dd>` : ""}
   `;
-  
-  // Set tags
   els.lbTags.innerHTML = (item.tags || [])
     .map((t) => `<span class="chip">${t.name}</span>`)
     .join("");
-  
-  // Set source link
   els.lbSource.href = item.source || item.url;
-  
-  // Show lightbox - REMOVE hidden attribute
-  els.lightbox.removeAttribute('hidden');
+  els.lightbox.hidden = false;
   document.body.style.overflow = "hidden";
-  
-  // Debug
-  console.log('Lightbox opened');
 }
 
-// ========== CLOSE LIGHTBOX FIX ==========
 function closeLightbox() {
-  // Set hidden attribute
-  els.lightbox.setAttribute('hidden', '');
+  els.lightbox.hidden = true;
   els.lightboxImg.src = "";
   document.body.style.overflow = "";
-  
-  // Debug
-  console.log('Lightbox closed');
 }
 
-// ========== EVENT LISTENERS ==========
-// Close button
+// Event listeners untuk lightbox
 els.lightboxClose.addEventListener("click", function(e) {
   e.stopPropagation();
   closeLightbox();
 });
 
-// Click on backdrop
 els.lightbox.addEventListener("click", function(e) {
   if (e.target === els.lightbox) {
     closeLightbox();
   }
 });
 
-// Escape key
 document.addEventListener("keydown", function(e) {
   if (e.key === "Escape") {
-    // Check if lightbox is visible (not hidden)
-    if (!els.lightbox.hasAttribute('hidden')) {
+    if (!els.lightbox.hidden) {
       closeLightbox();
     }
   }
 });
 
-// ========== LOAD IMAGES ==========
+// Close lightbox dengan klik di luar gambar (tambahan)
+document.addEventListener("click", function(e) {
+  if (!els.lightbox.hidden) {
+    const isClickInside = els.lightbox.querySelector('.lightbox__inner').contains(e.target);
+    const isClickOnClose = els.lightboxClose.contains(e.target);
+    if (!isClickInside && !isClickOnClose) {
+      closeLightbox();
+    }
+  }
+});
+
 async function loadImages() {
   setStatus("Consulting the archive…");
   els.grid.innerHTML = "";
@@ -214,7 +200,6 @@ async function loadImages() {
   }
 }
 
-// ========== FILTER EVENTS ==========
 els.drawer.querySelectorAll(".seg").forEach((seg) => {
   const key = seg.dataset.key;
   seg.querySelectorAll(".seg__opt").forEach((btn) => {
@@ -230,7 +215,6 @@ els.drawer.querySelectorAll(".seg").forEach((seg) => {
   });
 });
 
-// ========== PAGER EVENTS ==========
 els.prevPage.addEventListener("click", () => {
   if (state.page > 1) {
     state.page -= 1;
@@ -249,10 +233,8 @@ els.nextPage.addEventListener("click", () => {
 
 els.refreshBtn.addEventListener("click", () => loadImages());
 
-// ========== INIT ==========
+// Inisialisasi
 fetchTags();
 loadImages();
 
-// Debug: check if elements exist
-console.log('Lightbox element:', els.lightbox);
-console.log('Close button:', els.lightboxClose);
+console.log("Atlas Archive initialized. Click any image to open lightbox.");

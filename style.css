@@ -273,13 +273,37 @@ main{padding:1.6rem clamp(1rem, 4vw, 3rem) 3rem; max-width:1600px; margin:0 auto
   display:flex;
   align-items:center;
   justify-content:center;
-  z-index:50;
+  z-index:9999;
   padding:2rem 1rem;
+  backdrop-filter:blur(4px);
 }
 .lightbox__close{
-  position:absolute; top:1.2rem; right:1.5rem;
-  background:none; border:none; color:var(--text);
-  font-size:1.4rem; cursor:pointer;
+  position:absolute;
+  top:1.2rem;
+  right:1.5rem;
+  background:rgba(0,0,0,0.6);
+  border:1px solid var(--line);
+  color:var(--text);
+  font-size:1.8rem;
+  cursor:pointer;
+  z-index:10000;
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .2s ease;
+  padding:0;
+  line-height:1;
+}
+.lightbox__close:hover{
+  background:rgba(198,161,91,0.3);
+  border-color:var(--brass);
+  transform:scale(1.1);
+}
+.lightbox__close:active{
+  transform:scale(0.9);
 }
 .lightbox__inner{
   display:flex;
@@ -287,6 +311,7 @@ main{padding:1.6rem clamp(1rem, 4vw, 3rem) 3rem; max-width:1600px; margin:0 auto
   max-width:1100px;
   width:100%;
   max-height:88vh;
+  position:relative;
 }
 .lightbox__imgwrap{flex:1 1 auto; min-width:0; display:flex; align-items:center; justify-content:center}
 .lightbox__imgwrap img{max-width:100%; max-height:82vh; object-fit:contain; border-radius:2px}
@@ -295,6 +320,7 @@ main{padding:1.6rem clamp(1rem, 4vw, 3rem) 3rem; max-width:1600px; margin:0 auto
   border-left:1px solid var(--line);
   padding-left:1.5rem;
   overflow-y:auto;
+  max-height:82vh;
 }
 .lightbox__meta h2{font-family:var(--serif); font-size:1.4rem; margin:0 0 .8rem; color:var(--brass)}
 .lbdl{font-family:var(--mono); font-size:.8rem; color:var(--muted); margin:0 0 1rem}
@@ -304,6 +330,7 @@ main{padding:1.6rem clamp(1rem, 4vw, 3rem) 3rem; max-width:1600px; margin:0 auto
 @media (max-width:720px){
   .lightbox__inner{flex-direction:column; overflow-y:auto}
   .lightbox__meta{border-left:none; border-top:1px solid var(--line); padding:1rem 0 0}
+  .lightbox__close{top:.5rem; right:.5rem; width:40px; height:40px; font-size:1.4rem}
 }
 
 @media (prefers-reduced-motion:reduce){
