@@ -126,9 +126,15 @@ function renderGrid(items) {
   els.grid.appendChild(frag);
 }
 
+// ========== LIGHTBOX FIX ==========
 function openLightbox(item) {
+  if (!item) return;
+  
+  // Set image
   els.lightboxImg.src = item.url;
   els.lightboxImg.alt = `Specimen No. ${item.id}`;
+  
+  // Set metadata
   els.lbId.textContent = `Plate No. ${item.id}`;
   els.lbDl.innerHTML = `
     <dt>Dimensions</dt><dd>${item.width} × ${item.height}px</dd>
@@ -137,28 +143,59 @@ function openLightbox(item) {
     <dt>Favorites</dt><dd>${item.favorites}</dd>
     ${item.artists?.length ? `<dt>Artist</dt><dd>${item.artists.map((a) => a.name).join(", ")}</dd>` : ""}
   `;
+  
+  // Set tags
   els.lbTags.innerHTML = (item.tags || [])
     .map((t) => `<span class="chip">${t.name}</span>`)
     .join("");
+  
+  // Set source link
   els.lbSource.href = item.source || item.url;
-  els.lightbox.hidden = false;
+  
+  // Show lightbox - REMOVE hidden attribute
+  els.lightbox.removeAttribute('hidden');
   document.body.style.overflow = "hidden";
+  
+  // Debug
+  console.log('Lightbox opened');
 }
 
+// ========== CLOSE LIGHTBOX FIX ==========
 function closeLightbox() {
-  els.lightbox.hidden = true;
+  // Set hidden attribute
+  els.lightbox.setAttribute('hidden', '');
   els.lightboxImg.src = "";
   document.body.style.overflow = "";
+  
+  // Debug
+  console.log('Lightbox closed');
 }
 
-els.lightboxClose.addEventListener("click", closeLightbox);
-els.lightbox.addEventListener("click", (e) => {
-  if (e.target === els.lightbox) closeLightbox();
-});
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeLightbox();
+// ========== EVENT LISTENERS ==========
+// Close button
+els.lightboxClose.addEventListener("click", function(e) {
+  e.stopPropagation();
+  closeLightbox();
 });
 
+// Click on backdrop
+els.lightbox.addEventListener("click", function(e) {
+  if (e.target === els.lightbox) {
+    closeLightbox();
+  }
+});
+
+// Escape key
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Escape") {
+    // Check if lightbox is visible (not hidden)
+    if (!els.lightbox.hasAttribute('hidden')) {
+      closeLightbox();
+    }
+  }
+});
+
+// ========== LOAD IMAGES ==========
 async function loadImages() {
   setStatus("Consulting the archive…");
   els.grid.innerHTML = "";
@@ -177,6 +214,7 @@ async function loadImages() {
   }
 }
 
+// ========== FILTER EVENTS ==========
 els.drawer.querySelectorAll(".seg").forEach((seg) => {
   const key = seg.dataset.key;
   seg.querySelectorAll(".seg__opt").forEach((btn) => {
@@ -192,6 +230,7 @@ els.drawer.querySelectorAll(".seg").forEach((seg) => {
   });
 });
 
+// ========== PAGER EVENTS ==========
 els.prevPage.addEventListener("click", () => {
   if (state.page > 1) {
     state.page -= 1;
@@ -199,6 +238,7 @@ els.prevPage.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 });
+
 els.nextPage.addEventListener("click", () => {
   if (state.page < state.totalPages) {
     state.page += 1;
@@ -206,7 +246,13 @@ els.nextPage.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 });
+
 els.refreshBtn.addEventListener("click", () => loadImages());
 
+// ========== INIT ==========
 fetchTags();
 loadImages();
+
+// Debug: check if elements exist
+console.log('Lightbox element:', els.lightbox);
+console.log('Close button:', els.lightboxClose);
