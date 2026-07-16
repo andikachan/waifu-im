@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Atlas — Specimen Archive</title>
+<meta name="description" content="A living specimen archive of illustrated waifu, catalogued by tag, orientation and rating." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="ledger-header">
+  <div class="ledger-header__brand">
+    <span class="ledger-header__mark">§</span>
+    <div>
+      <h1>Atlas <em>of the Archive</em></h1>
+      <p class="ledger-header__sub">A specimen catalogue, drawn live from the collection</p>
+    </div>
+  </div>
+  <button id="refreshBtn" class="btn btn--brass" title="Draw a fresh set">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 4v6h-6"/></svg>
+    Redraw
+  </button>
+</header>
+
+<nav class="drawer" id="drawer">
+  <div class="drawer__row">
+    <fieldset class="ctrl">
+      <legend>Rating</legend>
+      <div class="seg" data-key="isNsfw">
+        <button data-val="False" class="seg__opt is-active">Safe</button>
+        <button data-val="True" class="seg__opt">NSFW</button>
+        <button data-val="All" class="seg__opt">All</button>
+      </div>
+    </fieldset>
+
+    <fieldset class="ctrl">
+      <legend>Orientation</legend>
+      <div class="seg" data-key="orientation">
+        <button data-val="All" class="seg__opt is-active">Any</button>
+        <button data-val="Portrait" class="seg__opt">Portrait</button>
+        <button data-val="Landscape" class="seg__opt">Landscape</button>
+        <button data-val="Square" class="seg__opt">Square</button>
+      </div>
+    </fieldset>
+
+    <fieldset class="ctrl">
+      <legend>Motion</legend>
+      <div class="seg" data-key="isAnimated">
+        <button data-val="All" class="seg__opt is-active">Any</button>
+        <button data-val="False" class="seg__opt">Still</button>
+        <button data-val="True" class="seg__opt">Animated</button>
+      </div>
+    </fieldset>
+
+    <fieldset class="ctrl">
+      <legend>Sort</legend>
+      <div class="seg" data-key="orderBy">
+        <button data-val="Random" class="seg__opt is-active">Random</button>
+        <button data-val="UploadedAt" class="seg__opt">Newest</button>
+        <button data-val="Favorites" class="seg__opt">Favorites</button>
+      </div>
+    </fieldset>
+
+    <fieldset class="ctrl">
+      <legend>Per page</legend>
+      <div class="seg" data-key="pageSize">
+        <button data-val="20" class="seg__opt">20</button>
+        <button data-val="30" class="seg__opt is-active">30</button>
+        <button data-val="48" class="seg__opt">48</button>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="drawer__row drawer__row--tags">
+    <span class="drawer__label">Specimens tagged</span>
+    <div id="tagChips" class="chips">
+      <span class="chip chip--loading">loading catalogue…</span>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div id="status" class="status" hidden></div>
+  <section id="grid" class="grid" aria-live="polite"></section>
+
+  <div class="pager">
+    <button id="prevPage" class="btn btn--ghost">◂ Prior</button>
+    <span id="pageLabel" class="pager__label">Plate — / —</span>
+    <button id="nextPage" class="btn btn--ghost">Next ▸</button>
+  </div>
+</main>
+
+<footer class="foot">
+  <p>Images served live from <a href="https://waifu.im" target="_blank" rel="noopener noreferrer">waifu.im</a>. Every plate links back to its original source.</p>
+</footer>
+
+<div id="lightbox" class="lightbox" hidden>
+  <button id="lightboxClose" class="lightbox__close" aria-label="Close">✕</button>
+  <div class="lightbox__inner">
+    <div class="lightbox__imgwrap">
+      <img id="lightboxImg" alt="" />
+    </div>
+    <div class="lightbox__meta">
+      <h2 id="lbId">Plate</h2>
+      <dl id="lbDl" class="lbdl"></dl>
+      <div id="lbTags" class="chips"></div>
+      <a id="lbSource" class="btn btn--brass" href="#" target="_blank" rel="noopener noreferrer">View source ↗</a>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
