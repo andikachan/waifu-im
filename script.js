@@ -126,59 +126,30 @@ function renderGrid(items) {
   els.grid.appendChild(frag);
 }
 
+// LIGHTBOX - langsung ke halaman utama tanpa lightbox
 function openLightbox(item) {
-  els.lightboxImg.src = item.url;
-  els.lightboxImg.alt = `Specimen No. ${item.id}`;
-  els.lbId.textContent = `Plate No. ${item.id}`;
-  els.lbDl.innerHTML = `
-    <dt>Dimensions</dt><dd>${item.width} × ${item.height}px</dd>
-    <dt>File</dt><dd>${item.extension.replace(".", "").toUpperCase()} · ${(item.byteSize / 1024 / 1024).toFixed(2)} MB</dd>
-    <dt>Uploaded</dt><dd>${new Date(item.uploadedAt).toLocaleDateString()}</dd>
-    <dt>Favorites</dt><dd>${item.favorites}</dd>
-    ${item.artists?.length ? `<dt>Artist</dt><dd>${item.artists.map((a) => a.name).join(", ")}</dd>` : ""}
-  `;
-  els.lbTags.innerHTML = (item.tags || [])
-    .map((t) => `<span class="chip">${t.name}</span>`)
-    .join("");
-  els.lbSource.href = item.source || item.url;
-  els.lightbox.hidden = false;
-  document.body.style.overflow = "hidden";
+  // Langsung buka URL gambar di tab baru
+  window.open(item.url, '_blank');
+  
+  // Atau jika ingin langsung download:
+  // const link = document.createElement('a');
+  // link.href = item.url;
+  // link.download = `waifu_${item.id}.${item.extension}`;
+  // link.click();
 }
 
-function closeLightbox() {
-  els.lightbox.hidden = true;
-  els.lightboxImg.src = "";
-  document.body.style.overflow = "";
-}
+// Hapus semua fungsi lightbox yang tidak perlu
+// function closeLightbox() { ... } // TIDAK DIPERLUKAN
 
-// Event listeners untuk lightbox
-els.lightboxClose.addEventListener("click", function(e) {
-  e.stopPropagation();
-  closeLightbox();
-});
+// Event listeners untuk lightbox - DINONAKTIFKAN
+// els.lightboxClose.addEventListener("click", ...);
+// els.lightbox.addEventListener("click", ...);
+// document.addEventListener("keydown", ...);
 
-els.lightbox.addEventListener("click", function(e) {
-  if (e.target === els.lightbox) {
-    closeLightbox();
-  }
-});
-
-document.addEventListener("keydown", function(e) {
-  if (e.key === "Escape") {
-    if (!els.lightbox.hidden) {
-      closeLightbox();
-    }
-  }
-});
-
-// Close lightbox dengan klik di luar gambar (tambahan)
-document.addEventListener("click", function(e) {
-  if (!els.lightbox.hidden) {
-    const isClickInside = els.lightbox.querySelector('.lightbox__inner').contains(e.target);
-    const isClickOnClose = els.lightboxClose.contains(e.target);
-    if (!isClickInside && !isClickOnClose) {
-      closeLightbox();
-    }
+// TAMBAHAN: Jika ada elemen lightbox di HTML, sembunyikan secara permanen
+document.addEventListener('DOMContentLoaded', function() {
+  if (els.lightbox) {
+    els.lightbox.style.display = 'none';
   }
 });
 
@@ -233,8 +204,5 @@ els.nextPage.addEventListener("click", () => {
 
 els.refreshBtn.addEventListener("click", () => loadImages());
 
-// Inisialisasi
 fetchTags();
 loadImages();
-
-console.log("Atlas Archive initialized. Click any image to open lightbox.");
